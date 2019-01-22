@@ -1,0 +1,38 @@
+---
+driver:
+  name: docker
+  privileged: true
+
+provisioner:
+  name: chef_zero
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu-16.04
+  - name: ubuntu-18.04
+    driver:
+      provision_command:
+        - mkdir /run/sshd
+  - name: debian-9
+  - name: centos-6
+  - name: centos-7
+  - name: opensuse-leap-42.3
+
+suites:
+  - name: execution
+    named_run_list: execution
+    verifier:
+      inspec_tests:
+        - test/default
+        - test/execution
+  - name: update
+    verifier:
+      inspec_tests:
+        - test/default
+        - test/update
+    named_run_list: update
+    attributes:
+      ayte:
+        jvm-async-profiler:
+          version: '1.4'
